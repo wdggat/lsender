@@ -40,6 +40,8 @@ public class EmailMsg{
 		this.content = content;
 	}
 
+	public EmailMsg() {}
+
 	public static EmailMsg getFromJson(String jsonStr) {
 		return JSON.parseObject(jsonStr, EmailMsg.class);
 	}
