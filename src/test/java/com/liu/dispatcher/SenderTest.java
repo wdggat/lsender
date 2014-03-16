@@ -33,7 +33,8 @@ public class SenderTest {
 		List<String> to = new ArrayList<String>();
 		to.add("wdggat@163.com");
 		msg.setTo(to);
-		Sender.sendSimpleMail(msg);
+//		Sender.sendSimpleMail(msg);
+		Sender.sendHtml(msg);
 		System.out.println("Mail sent.");
 	}
 }

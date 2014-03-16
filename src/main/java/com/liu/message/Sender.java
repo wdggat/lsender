@@ -33,29 +33,23 @@ public class Sender {
 		}
 	}
 	
-	// TODO: not succeed yet.
 	public static boolean sendHtml(EmailMsg msg) {
 		try {
             HtmlEmail email = new HtmlEmail();
             email.setHostName(conf.getMailHost163());
-
-            email.setAuthentication("forweibotest@163.com", "testpassword");
-//            email.setFrom(conf.getMailFromAddr(), conf.getMailFromName());
-            email.setFrom("forweibotest@163.com");
-            email.setSSLOnConnect(true);
+            email.setFrom(conf.getMail163FromAddr(), conf.getMailFromName());
+            email.setFrom(conf.getMail163FromAddr(), "Whoami");
+            email.setSSLCheckServerIdentity(true);
             for(String to: msg.getTo())
                 email.addTo(to);
             email.setSubject(msg.getSubject());
-
             email.setHtmlMsg(msg.getContent());
-            // set the alternative message
             email.setTextMsg("Your email client does not support HTML messages");
-
             email.send();
+            return true;
         } catch (Exception e) {
             logger.error("Error occurred during sending email", e);
             return false;
         }
-        return true;
 	}
 }

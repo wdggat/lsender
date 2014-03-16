@@ -28,7 +28,7 @@ public class QueueHelper {
 		try {
 			conn = connectFactory.createConnection();
 			conn.start();
-			session = conn.createSession(true, Session.AUTO_ACKNOWLEDGE);
+			session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
 			Destination destination = session.createQueue(conf.getMQQueueName());
 			consumer = session.createConsumer(destination);
 		} catch (Exception e) {

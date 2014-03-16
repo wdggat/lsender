@@ -39,10 +39,13 @@ public class InputRequestHandler implements Runnable {
 				logger.debug("$Msg from queue: " + msg.getText());
 				AppMessage appMsg = AppMessage.getFromInputJson(msg.getText());
 				EmailMsg emailMsg = EmailMsg.getFromAppMessage(appMsg);
-				if(Sender.sendSimpleMail(emailMsg))
+				if(Sender.sendSimpleMail(emailMsg)) {
 					RequestLogger.getRequestLogger().logMsgDone(appMsg, id);
-				else
+					logger.info("$mail sent, " + appMsg.toJsonStr());
+				} else {
 					RequestLogger.getRequestLogger().logMsgFailed(appMsg, id);
+					logger.error("$mail sent failed, " + appMsg.toJsonStr());
+				}
 			} catch (Throwable e) {
 				if (consumer != null) {
 					try {
