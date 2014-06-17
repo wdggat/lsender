@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.liu.dispatcher.RequestLogger;
 import com.liu.helper.QueueHelper;
+import com.liu.helper.RedisHelper;
 
 public class InputRequestHandler implements Runnable {
     private static final Logger logger = Logger.getLogger(InputRequestHandler.class);
@@ -40,6 +41,11 @@ public class InputRequestHandler implements Runnable {
 				Message msg = Message.getFromInputJson(textMsg.getText());
 				boolean sendResult = false;
 				if(msg.getDataType() == DataType.QUICK_MSG) {
+					if(msg.isFromEmail()) {
+						User user = User.fromJsonStr(RedisHelper.getUinfoCache(msg.getFrom()));
+						if(!user.getUid().equals(""))
+						    msg.setFrom(user.getUid());
+					}
 					sendResult = Sender.pushMsg(msg);
 				} else if(msg.getDataType() == DataType.NEW_MSG) {
 					sendResult = Sender.sendMail(msg);

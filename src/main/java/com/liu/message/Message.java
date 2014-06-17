@@ -110,4 +110,8 @@ public class Message implements Comparable<Message> {
 		return uname.equals(from);
 	}
 	
+	public boolean isFromEmail() {
+		return from.contains("@");
+	}
+	
 }

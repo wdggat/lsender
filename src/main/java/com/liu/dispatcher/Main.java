@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.liu.helper.QueueHelper;
+import com.liu.helper.RedisHelper;
 import com.liu.message.InputRequestHandler;
 
 public class Main {
@@ -23,6 +24,9 @@ public class Main {
             logger.error("Error occurred during initializing request logger, abort");
             return;
         }
+        
+        logger.info("Initializing RedisHelper");
+        RedisHelper.init(conf.getRedisServerMaster(), conf.getRedisServerSlave());
 
         logger.info("initing receipt mq...");
         if(!QueueHelper.init()){

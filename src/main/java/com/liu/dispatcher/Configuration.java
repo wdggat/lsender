@@ -89,4 +89,12 @@ public class Configuration {
     public int getMail163Port() {
     	return Integer.parseInt(properties.getProperty("mail.163.port"));
     }
+    
+    public String getRedisServerMaster() {
+    	return properties.getProperty("redis_server_master");
+    }
+    
+    public String getRedisServerSlave() {
+    	return properties.getProperty("redis_server_slave");
+    }
 }
