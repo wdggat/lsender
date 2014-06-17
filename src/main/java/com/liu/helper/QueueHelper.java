@@ -1,4 +1,4 @@
-package com.liu.dispatcher;
+package com.liu.helper;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;

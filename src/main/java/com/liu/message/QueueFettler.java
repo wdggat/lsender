@@ -6,7 +6,7 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.TextMessage;
 
-import com.liu.dispatcher.QueueHelper;
+import com.liu.helper.QueueHelper;
 
 public class QueueFettler {
 	public static void main(String argv[]) throws JMSException {
@@ -16,9 +16,9 @@ public class QueueFettler {
 		int i = 0;
 		while(i < 100) {
 			i += 1;
-			TextMessage msg = (TextMessage) consumer.receive();
-			AppMessage appMsg = AppMessage.getFromInputJson(msg.getText());
-			System.out.println("$msg_" + i + " : " + new Date(appMsg.getOccurTime()).toString() + " - " + msg.getText());
+			TextMessage textMsg = (TextMessage) consumer.receive();
+			Message msg = Message.getFromInputJson(textMsg.getText());
+			System.out.println("$msg_" + i + " : " + new Date(msg.getTime()).toString() + " - " + textMsg.getText());
 		}
 	}
 }

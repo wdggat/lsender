@@ -13,7 +13,15 @@ public class Sender {
 	private static final Logger logger = Logger.getLogger(Sender.class);
 	private static Configuration conf = new Configuration();
 	
-	public static boolean sendSimpleMail(EmailMsg msg){
+	public static boolean sendMail(Message msg) {
+		return sendSimpleMail(msg);
+	}
+	
+	public static boolean pushMsg(Message msg) {
+		//TODO
+	}
+	
+	private static boolean sendSimpleMail(Message msg){
 		try {
 			Email email = new SimpleEmail();
 			email.setHostName(conf.getMailHost163());
@@ -23,8 +31,7 @@ public class Sender {
 			email.setFrom(conf.getMail163FromAddr(), conf.getMailFromName());
 			email.setSubject(msg.getSubject());
 			email.setMsg(msg.getContent());
-			for(String to: msg.getTo())
-                email.addTo(to);
+            email.addTo(msg.getTo());
 			email.send();
 			return true;
 		} catch (EmailException e) {
@@ -33,18 +40,15 @@ public class Sender {
 		}
 	}
 	
-	public static boolean sendHtml(EmailMsg msg) {
+	private static boolean sendHtml(Message msg) {
 		try {
             HtmlEmail email = new HtmlEmail();
             email.setHostName(conf.getMailHost163());
             email.setFrom(conf.getMail163FromAddr(), conf.getMailFromName());
-            email.setFrom(conf.getMail163FromAddr(), "Whoami");
             email.setSSLCheckServerIdentity(true);
-            for(String to: msg.getTo())
-                email.addTo(to);
+            email.addTo(msg.getTo());
             email.setSubject(msg.getSubject());
             email.setHtmlMsg(msg.getContent());
-            email.setTextMsg("Your email client does not support HTML messages");
             email.send();
             return true;
         } catch (Exception e) {

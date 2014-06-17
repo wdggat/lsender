@@ -8,8 +8,8 @@ import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 
-import com.liu.dispatcher.QueueHelper;
 import com.liu.dispatcher.RequestLogger;
+import com.liu.helper.QueueHelper;
 
 public class InputRequestHandler implements Runnable {
     private static final Logger logger = Logger.getLogger(InputRequestHandler.class);
@@ -35,16 +35,23 @@ public class InputRequestHandler implements Runnable {
 
         while (true) {
         	try {
-				TextMessage msg = (TextMessage) consumer.receive();
-				logger.debug("$Msg from queue: " + msg.getText());
-				AppMessage appMsg = AppMessage.getFromInputJson(msg.getText());
-				EmailMsg emailMsg = EmailMsg.getFromAppMessage(appMsg);
-				if(Sender.sendSimpleMail(emailMsg)) {
-					RequestLogger.getRequestLogger().logMsgDone(appMsg, id);
-					logger.info("$mail sent, " + appMsg.toJsonStr());
+				TextMessage textMsg = (TextMessage) consumer.receive();
+				logger.debug("$Msg from queue: " + textMsg.getText());
+				Message msg = Message.getFromInputJson(textMsg.getText());
+				boolean sendResult = false;
+				if(msg.getDataType() == DataType.QUICK_MSG) {
+					sendResult = Sender.pushMsg(msg);
+				} else if(msg.getDataType() == DataType.NEW_MSG) {
+					sendResult = Sender.sendMail(msg);
+				} else if(msg.getDataType() == DataType.REPLY) {
+					sendResult = Sender.pushMsg(msg);
+				}
+				if(sendResult) {
+					RequestLogger.getRequestLogger().logMsgDone(msg, id);
+					logger.info("$mail sent, " + msg.toJson());
 				} else {
-					RequestLogger.getRequestLogger().logMsgFailed(appMsg, id);
-					logger.error("$mail sent failed, " + appMsg.toJsonStr());
+					RequestLogger.getRequestLogger().logMsgFailed(msg, id);
+					logger.error("$mail sent failed, " + msg.toJson());
 				}
 			} catch (Throwable e) {
 				if (consumer != null) {

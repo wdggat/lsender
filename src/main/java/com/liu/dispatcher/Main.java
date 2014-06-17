@@ -8,6 +8,7 @@ import javax.jms.MessageConsumer;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import com.liu.helper.QueueHelper;
 import com.liu.message.InputRequestHandler;
 
 public class Main {

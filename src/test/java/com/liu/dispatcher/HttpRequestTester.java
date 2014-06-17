@@ -1,11 +1,10 @@
 package com.liu.dispatcher;
 
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import com.liu.dispatcher.HttpClientVM;
-
-import static org.junit.Assert.assertEquals;
+import com.liu.helper.HttpClientVM;
 
 public class HttpRequestTester {
 

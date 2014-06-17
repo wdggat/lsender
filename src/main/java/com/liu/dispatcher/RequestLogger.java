@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 
-import com.liu.message.AppMessage;
+import com.liu.message.Message;
 
 public class RequestLogger {
     private static final Logger logger = Logger.getLogger(RequestLogger.class);
@@ -61,12 +61,12 @@ public class RequestLogger {
 
     }
 
-    public void logMsgDone(AppMessage appMsg, int id) {
-        writeToFile(msgDonePath, appMsg, id);
+    public void logMsgDone(Message msg, int id) {
+        writeToFile(msgDonePath, msg, id);
     }
 
-    public void logMsgFailed(AppMessage appMsg, int id) {
-        writeToFile(msgFailedPath, appMsg, id);
+    public void logMsgFailed(Message msg, int id) {
+        writeToFile(msgFailedPath, msg, id);
     }
 
     private String getDayStringOfToday() {
@@ -74,7 +74,7 @@ public class RequestLogger {
         return format.format(Calendar.getInstance().getTime());
     }
 
-    protected boolean writeToFile(String filePath, AppMessage appMsg, int id) {
+    protected boolean writeToFile(String filePath, Message msg, int id) {
         String dayStr = getDayStringOfToday();
         File file = new File(filePath + '/' + dayStr + '-' + String.valueOf(id));
 
@@ -82,7 +82,7 @@ public class RequestLogger {
         try {
             // Append to the file
             out = new PrintStream(new FileOutputStream(file, true));
-            out.println(appMsg.toString());
+            out.println(msg.toJson());
             closeOutputSteam(out);
         } catch (IOException e) {
             logger.error("Failed to write InputRequest to " + filePath);
