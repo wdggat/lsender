@@ -19,6 +19,7 @@ public class Sender {
 	
 	public static boolean pushMsg(Message msg) {
 		//TODO
+		return false;
 	}
 	
 	private static boolean sendSimpleMail(Message msg){

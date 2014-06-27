@@ -97,4 +97,12 @@ public class Configuration {
     public String getRedisServerSlave() {
     	return properties.getProperty("redis_server_slave");
     }
+    
+    public String getBaiduPushApiKey() {
+    	return properties.getProperty("baidu_api_key");
+    }
+    
+    public String getBaiduPushSecretKey() {
+    	return properties.getProperty("baidu_secret_key");
+    }
 }

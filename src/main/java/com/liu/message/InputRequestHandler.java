@@ -46,7 +46,8 @@ public class InputRequestHandler implements Runnable {
 						if(!user.getUid().equals(""))
 						    msg.setFrom(user.getUid());
 					}
-					sendResult = Sender.pushMsg(msg);
+//					sendResult = Sender.pushMsg(msg);
+					//TODO get userId, channelid to send baidu_push
 				} else if(msg.getDataType() == DataType.NEW_MSG) {
 					sendResult = Sender.sendMail(msg);
 				} else if(msg.getDataType() == DataType.REPLY) {

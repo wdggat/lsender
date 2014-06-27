@@ -8,6 +8,7 @@ import javax.jms.MessageConsumer;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import com.liu.helper.BaiduPushHelper;
 import com.liu.helper.QueueHelper;
 import com.liu.helper.RedisHelper;
 import com.liu.message.InputRequestHandler;
@@ -33,6 +34,9 @@ public class Main {
         	logger.fatal("Error occurs during initing receipt mq, abort.");
         	return;
         }
+        
+        logger.info("Initializing BaiduPushHelper");
+        BaiduPushHelper.init(conf.getBaiduPushApiKey(), conf.getBaiduPushSecretKey());
         
 /*        logger.info("Starting HttpClient ...");
         HttpClientVM.init(200, 40);*/
