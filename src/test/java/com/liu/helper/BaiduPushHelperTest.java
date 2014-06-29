@@ -19,6 +19,6 @@ public class BaiduPushHelperTest {
 		msg.setTo("shliuxiaolong@163.com");
 		String userId = "820813141354190040";
 		long channelId = 3947634279025921276L;
-		BaiduPushHelper.pushMessage(userId, channelId, msg);
+		BaiduPushHelper.pushMessage(userId, msg);
 	}
 }

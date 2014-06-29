@@ -1,5 +1,6 @@
 package com.liu.message;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -9,6 +10,7 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 
 import com.liu.dispatcher.RequestLogger;
+import com.liu.helper.BaiduPushHelper;
 import com.liu.helper.QueueHelper;
 import com.liu.helper.RedisHelper;
 
@@ -46,8 +48,11 @@ public class InputRequestHandler implements Runnable {
 						if(!user.getUid().equals(""))
 						    msg.setFrom(user.getUid());
 					}
-//					sendResult = Sender.pushMsg(msg);
-					//TODO get userId, channelid to send baidu_push
+					List<String> baiduUinfo = RedisHelper.getBaiduUserCache(msg.getTo(), 2);
+					if(baiduUinfo == null) {
+						sendResult = false;
+					}
+					sendResult = BaiduPushHelper.pushMessage(baiduUinfo.get(0), msg);
 				} else if(msg.getDataType() == DataType.NEW_MSG) {
 					sendResult = Sender.sendMail(msg);
 				} else if(msg.getDataType() == DataType.REPLY) {
