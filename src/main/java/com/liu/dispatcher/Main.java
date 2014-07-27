@@ -43,7 +43,7 @@ public class Main {
 
         logger.info("Setup messages consumers ...");
         MessageConsumer consumer = QueueHelper.getConsumer();
-        int inputMsgQueuePoolSize = 30;
+        int inputMsgQueuePoolSize = 5;
         ExecutorService msgPool = Executors.newFixedThreadPool(inputMsgQueuePoolSize);
         for (int i = 0; i < inputMsgQueuePoolSize; i++) {
             msgPool.submit(new InputRequestHandler(i, consumer));
