@@ -1,5 +1,7 @@
 package com.liu.message;
 
+import com.alibaba.fastjson.JSON;
+
 public enum DataType {
 	NONE(-1), NEW_MSG(1), REPLY(2), QUICK_MSG(3), REGIST(100), LOGIN(101), PASSWORD_FORGET(102), PASSWORD_CHANGE(103), BAIDU_PUSH_BIND(104);
 	private int code;
@@ -41,5 +43,9 @@ public enum DataType {
 	
 	public boolean isTypeMessage() {
 		return code < REGIST.code;
+	}
+	
+	public String toJson() {
+		return JSON.toJSONString(this);
 	}
 }
