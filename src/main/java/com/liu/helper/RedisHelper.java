@@ -25,7 +25,8 @@ public class RedisHelper {
     private static final int REDIS_MSG_KEY_EXPIRE = 600;
 
     private static final String uinfoCachePrefix = "u:";
-    private static final String baiduUinfoPrefix = "bd:u:";
+    private static final String baiduUinfoPrefixEmail = "be:";
+    private static final String baiduUinfoPrefixUid = "bu:";
 
     public static void init(String redisMaster, String redisSlave) {
         init(redisMaster, REDIS_DEFAULT_PORT, redisSlave, REDIS_DEFAULT_PORT);
@@ -68,18 +69,30 @@ public class RedisHelper {
     	return exists(uinfoCachePrefix + username);
     }
     
-    public static boolean setBaiduUserCache(String username, List<String> baiduUinfo) {
-    	return setCache(baiduUinfoPrefix, username, baiduUinfo);
+    public static boolean setBaiduUserCacheUname(String username, List<String> baiduUinfo) {
+    	return setCache(baiduUinfoPrefixEmail, username, baiduUinfo);
     }
     
-    public static List<String> getBaiduUserCache(String username, int valueLength) {
-    	return getCache(baiduUinfoPrefix, username, valueLength);
+    public static List<String> getBaiduUserCacheUname(String username, int valueLength) {
+    	return getCache(baiduUinfoPrefixEmail, username, valueLength);
     }
     
-    public static boolean delBaiduCache(String username) {
-    	return delCache(baiduUinfoPrefix, username);
+    public static boolean delBaiduCacheUname(String username) {
+    	return delCache(baiduUinfoPrefixEmail, username);
     }
-
+    
+    public static boolean setBaiduUserCacheUid(String uid, List<String> baiduUinfo) {
+    	return setCache(baiduUinfoPrefixUid, uid, baiduUinfo);
+    }
+    
+    public static List<String> getBaiduUserCacheUid(String uid, int valueLength) {
+    	return getCache(baiduUinfoPrefixUid, uid, valueLength);
+    }
+    
+    public static boolean delBaiduCacheUid(String uid) {
+    	return delCache(baiduUinfoPrefixUid, uid);
+    }
+    
     private static Set<String> hkeys(String realKey) {
         Jedis masterJedis = null;
         Jedis slaveJedis = null;

@@ -119,14 +119,14 @@ public class Message implements Comparable<Message> {
 		return JSON.parseObject(inputJson, Message.class);
 	}
 
-	public boolean isFromEmail() {
-		return from.contains("@");
-	}
-	
 	public boolean isSentBy(String uname) {
 		if(StringUtils.isEmpty(uname))
 			return false;
 		return uname.equals(from);
+	}
+	
+	public boolean isToEmail() {
+		return to.contains("@");
 	}
 	
 }

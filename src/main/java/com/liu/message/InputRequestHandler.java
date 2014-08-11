@@ -43,12 +43,11 @@ public class InputRequestHandler implements Runnable {
 				Message msg = Message.getFromInputJson(textMsg.getText());
 				boolean sendResult = false;
 				if(msg.getDataType() == DataType.QUICK_MSG) {
-					if(msg.isFromEmail()) {
-						User user = User.fromJsonStr(RedisHelper.getUinfoCache(msg.getFrom()));
-						if(!user.getUid().equals(""))
-						    msg.setFrom(user.getUid());
-					}
-					List<String> baiduUinfo = RedisHelper.getBaiduUserCache(msg.getTo(), 2);
+					List<String> baiduUinfo;
+					if(msg.isToEmail())
+					    baiduUinfo = RedisHelper.getBaiduUserCacheUname(msg.getTo(), 2);
+					else
+						baiduUinfo = RedisHelper.getBaiduUserCacheUid(msg.getTo(), 2);
 					if(baiduUinfo == null) {
 						sendResult = false;
 					}
