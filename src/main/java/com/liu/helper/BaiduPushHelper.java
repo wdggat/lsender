@@ -40,7 +40,7 @@ public class BaiduPushHelper {
 		try {
 			PushUnicastMessageRequest request = new PushUnicastMessageRequest();
 			request.setDeviceType(3); // device_type => 1: web 2: pc 3:android 4:ios 5:wp
-//			request.setChannelId(channelid);   // only baiduUserId works
+//			request.setChannelId(channelid);   // no need to have channelid
 			request.setUserId(userid);
 			request.setMessage(message.toJson());
 

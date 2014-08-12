@@ -42,7 +42,7 @@ public class InputRequestHandler implements Runnable {
 				logger.debug("$Msg from queue: " + textMsg.getText());
 				Message msg = Message.getFromInputJson(textMsg.getText());
 				boolean sendResult = false;
-				if(msg.getDataType() == DataType.QUICK_MSG) {
+				if(msg.getDataType() == DataType.QUICK_MSG || msg.getDataType() == DataType.REPLY) {
 					List<String> baiduUinfo;
 					if(msg.isToEmail())
 					    baiduUinfo = RedisHelper.getBaiduUserCacheUname(msg.getTo(), 2);
@@ -54,8 +54,9 @@ public class InputRequestHandler implements Runnable {
 					sendResult = BaiduPushHelper.pushMessage(baiduUinfo.get(0), msg);
 				} else if(msg.getDataType() == DataType.NEW_MSG) {
 					sendResult = Sender.sendMail(msg);
-				} else if(msg.getDataType() == DataType.REPLY) {
-					sendResult = Sender.pushMsg(msg);
+				} else {
+					logger.info("$error_mail, dropped. " + msg.toJson());
+					return;
 				}
 				if(sendResult) {
 					RequestLogger.getRequestLogger().logMsgDone(msg, id);

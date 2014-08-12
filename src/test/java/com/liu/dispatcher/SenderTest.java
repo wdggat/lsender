@@ -9,7 +9,10 @@ import com.liu.message.Sender;
 public class SenderTest {
 	public static void main(String argv[]) throws EmailException {
 		PropertyConfigurator.configure(Configuration.DEFAULT_CONF_PATH);
-		trySendSimpleMail();
+		if(trySendMail())
+		    System.out.println("Mail sent.");
+		else 
+		    System.out.println("Mail sent failed.");
 		
 //		EmailMsg msg = new EmailMsg();
 //		msg.setContent("内容test");
@@ -20,13 +23,15 @@ public class SenderTest {
 //		Sender.send(msg);
 	}
 	
-	private static void trySendSimpleMail() throws EmailException {
+	private static boolean trySendMail() throws EmailException {
 		Message msg = new Message();
+		msg.setFrom("hzliuxiaolong@126.com");
+		msg.setFromUid("95270");
 		msg.setContent("内容test");
 		msg.setSubject("主题test");
-		msg.setTo("wdggat@163.com");
+//		msg.setTo("hzliuxiaolong@163.com");
+		msg.setTo("597442779@qq.com");
 //		Sender.sendSimpleMail(msg);
-		Sender.sendMail(msg);
-		System.out.println("Mail sent.");
+		return Sender.sendMail(msg);
 	}
 }
