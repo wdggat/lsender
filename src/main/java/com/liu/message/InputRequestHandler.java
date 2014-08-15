@@ -41,6 +41,11 @@ public class InputRequestHandler implements Runnable {
 				TextMessage textMsg = (TextMessage) consumer.receive();
 				logger.debug("$Msg from queue: " + textMsg.getText());
 				Message msg = Message.getFromInputJson(textMsg.getText());
+				if(msg == null) {
+					logger.error("$error_input, dropped. " + textMsg.getText());
+					continue;
+				}
+				
 				boolean sendResult = false;
 				if(msg.getDataType() == DataType.QUICK_MSG || msg.getDataType() == DataType.REPLY) {
 					List<String> baiduUinfo;
@@ -48,7 +53,7 @@ public class InputRequestHandler implements Runnable {
 					    baiduUinfo = RedisHelper.getBaiduUserCacheUname(msg.getTo(), 2);
 					else
 						baiduUinfo = RedisHelper.getBaiduUserCacheUid(msg.getTo(), 2);
-					if(baiduUinfo == null) {
+					if(baiduUinfo == null || baiduUinfo.isEmpty()) {
 						sendResult = false;
 					}
 					sendResult = BaiduPushHelper.pushMessage(baiduUinfo.get(0), msg);
@@ -56,7 +61,7 @@ public class InputRequestHandler implements Runnable {
 					sendResult = Sender.sendMail(msg);
 				} else {
 					logger.info("$error_mail, dropped. " + msg.toJson());
-					return;
+					continue;
 				}
 				if(sendResult) {
 					RequestLogger.getRequestLogger().logMsgDone(msg, id);
@@ -66,6 +71,7 @@ public class InputRequestHandler implements Runnable {
 					logger.error("$mail sent failed, " + msg.toJson());
 				}
 			} catch (Throwable e) {
+				logger.error("msg sent exception, ", e);
 				if (consumer != null) {
 					try {
 						consumer.close();

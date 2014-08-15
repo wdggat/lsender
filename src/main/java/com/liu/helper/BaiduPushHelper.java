@@ -47,10 +47,7 @@ public class BaiduPushHelper {
 			// 5. 调用pushMessage接口
 			PushUnicastMessageResponse response = channelClient.pushUnicastMessage(request);
 			return response.getSuccessAmount() != 0;
-		} catch (ChannelClientException e) {
-			e.printStackTrace();
-			return false;
-		} catch (ChannelServerException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
