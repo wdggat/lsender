@@ -11,19 +11,21 @@ import java.util.*;
 
 public class RedisHelper {
     private static Logger logger = Logger.getLogger(RedisHelper.class);
-    private static final int version = 3;
+    private static final int version = 1;
 
     private static final int REDIS_DEFAULT_PORT = 6379;
 
     private static JedisPool masterPool;
     private static JedisPool slavePool;
 
-    public static final int REDIS_CONNECTION_FAILED = -1;
+    public static final int REDIS_SERVER_ERROR = -1;
     public static final int REDIS_KEY_NOT_EXISTS = 0;
     public static final int REDIS_KEY_EXISTS = 1;
 
     private static final int REDIS_MSG_KEY_EXPIRE = 600;
+    private static final int MIN_UID = 10001;
 
+    private static final String maxUidCachePrefix = "maxuid"; 
     private static final String uinfoCachePrefix = "u:";
     private static final String baiduUinfoPrefixEmail = "be:";
     private static final String baiduUinfoPrefixUid = "bu:";
@@ -91,6 +93,40 @@ public class RedisHelper {
     
     public static boolean delBaiduCacheUid(String uid) {
     	return delCache(baiduUinfoPrefixUid, uid);
+    }
+    
+    public static long incrUid() {
+    	long nextUid = incr(maxUidCachePrefix, 1);
+    	if(nextUid < MIN_UID) {
+    		return incr(maxUidCachePrefix, MIN_UID - nextUid);
+    	}
+    	return nextUid;
+    }
+    
+    private static long incr(String key, long increment) {
+    	Jedis masterJedis = null;
+        Jedis slaveJedis = null;
+        try {
+            masterJedis = masterPool.getResource();
+            return masterJedis.incrBy(key, increment);
+        } catch (JedisConnectionException je) {
+            logger.error("Connect to Redis master failed, lookup from Redis slave", je);
+            try {
+                slaveJedis = slavePool.getResource();
+                return slaveJedis.incrBy(key, increment);
+            } catch (Exception e) {
+                logger.error("Error occurred during hset", e);
+                returnBrokenResource(slavePool, slaveJedis);
+                return -1;
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred during hset", e);
+            returnBrokenResource(masterPool, masterJedis);
+            return -1;
+        } finally {
+            returnResource(masterPool, masterJedis);
+            returnResource(slavePool, slaveJedis);
+        }
     }
     
     private static Set<String> hkeys(String realKey) {
@@ -178,12 +214,12 @@ public class RedisHelper {
             } catch (Exception e) {
                 logger.error("Error occurred during hexists", e);
                 returnBrokenResource(slavePool, slaveJedis);
-                return REDIS_CONNECTION_FAILED;
+                return REDIS_SERVER_ERROR;
             }
         } catch (Exception e) {
             logger.error("Error occurred during hexists", e);
             returnBrokenResource(masterPool, masterJedis);
-            return REDIS_CONNECTION_FAILED;
+            return REDIS_SERVER_ERROR;
         } finally {
             returnResource(masterPool, masterJedis);
             returnResource(slavePool, slaveJedis);
