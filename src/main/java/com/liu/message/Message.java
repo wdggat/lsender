@@ -129,4 +129,16 @@ public class Message implements Comparable<Message> {
 		return to.contains("@");
 	}
 	
+	public boolean isValidMessage() {
+		return !StringUtils.isBlank(from) && !StringUtils.isBlank(fromUid) && !StringUtils.isBlank(to) && !StringUtils.isBlank(content); 
+	}
+	
+	public void normalize() {
+    	setContent(content.trim());
+    	setFrom(from.trim());
+    	setFromUid(fromUid.trim());
+    	setSubject(subject.trim());
+    	setTo(to.trim());
+    }
+	
 }

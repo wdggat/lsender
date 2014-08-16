@@ -38,9 +38,13 @@ public class User {
 	}
 
 	public static User fromJsonStr(String json) {
-		if (StringUtils.isEmpty(json))
+		if (StringUtils.isBlank(json))
 			return new User("", GENDER_UNSET, "", 0, "", "", "");
 		return JSON.parseObject(json, User.class);
+	}
+	
+	public boolean isNullUser() {
+		return email.equals("");
 	}
 
 	public int getGender() {
