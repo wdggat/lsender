@@ -13,6 +13,7 @@ public class Message implements Comparable<Message> {
 	private String subject;
 	private long time;
 	private String content;
+	private long localTime;
 	private DataType dataType;
 
 	public String getFrom() {
@@ -75,6 +76,14 @@ public class Message implements Comparable<Message> {
 		this.dataType = dataType;
 	}
 
+	public long getLocalTime() {
+		return localTime;
+	}
+
+	public void setLocalTime(long localTime) {
+		this.localTime = localTime;
+	}
+
 	public Message() {
 	}
 
@@ -85,7 +94,7 @@ public class Message implements Comparable<Message> {
 	 *            Unix epoch time, length_10
 	 */
 	public Message(String from, String fromUid, String to, String subject, long time,
-			String content, DataType dataType) {
+			String content, DataType dataType, long localTime) {
 		super();
 		this.from = from;
 		this.fromUid = fromUid;
@@ -94,6 +103,7 @@ public class Message implements Comparable<Message> {
 		this.time = time;
 		this.content = content;
 		this.dataType = dataType;
+		this.localTime = localTime;
 	}
 	
 	public String toJson() {
@@ -106,13 +116,13 @@ public class Message implements Comparable<Message> {
 
 	@Override
 	public int compareTo(Message another) {
-		long anotherTime = another.getTime();
-		return time > anotherTime ? 1 : (time == anotherTime ? 0 : -1);
+		long anotherTime = another.getLocalTime();
+		return localTime > anotherTime ? 1 : (localTime == anotherTime ? 0 : -1);
 	}
 
 	public static Message quickMessage(String from, String fromUid, String to, String content) {
 		return new Message(from, fromUid, to, EMPTY_SUBJECT,
-				System.currentTimeMillis() / 1000, content, DataType.QUICK_MSG);
+				System.currentTimeMillis() / 1000, content, DataType.QUICK_MSG, System.currentTimeMillis() / 1000);
 	}
 	
 	public static Message getFromInputJson(String inputJson) {
