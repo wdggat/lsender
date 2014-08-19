@@ -1,52 +1,47 @@
 package com.liu.helper;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
-
-import org.apache.activemq.ActiveMQConnection;
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.log4j.Logger;
 
 import com.liu.dispatcher.Configuration;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.QueueingConsumer;
 
 public class QueueHelper {
 	private static final Logger logger = Logger.getLogger(QueueHelper.class);
 
 	private static Configuration conf = new Configuration();
 	private static Connection conn = null;
-	private static Session session = null;
-	private static MessageConsumer consumer = null;
+	private static Channel channel;
 
 	public static boolean init() {
-		ConnectionFactory connectFactory = new ActiveMQConnectionFactory(
-				ActiveMQConnection.DEFAULT_USER,
-				ActiveMQConnection.DEFAULT_PASSWORD, conf.getMQBrokerUrl());
 		try {
-			conn = connectFactory.createConnection();
-			conn.start();
-			session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-			Destination destination = session.createQueue(conf.getMQQueueName());
-			consumer = session.createConsumer(destination);
+			ConnectionFactory factory = new ConnectionFactory();
+			factory.setHost(conf.getMQHost());
+			factory.setPort(conf.getMQPort());
+			factory.setUsername(conf.getMQUser());
+			factory.setPassword(conf.getMQPassword());
+			conn = factory.newConnection();
+			channel = conn.createChannel();
+			channel.queueDeclare(conf.getMQQueueName(), true, false, false,	null);
+			return true;
 		} catch (Exception e) {
-			logger.error("MQ init failed,", e);
-			if(conn != null)
-				try {
-					conn.close();
-				} catch (JMSException e2) {
-					logger.error("MQ close failed,", e2);
-				}
+			logger.error("Error occurs when initing MQ, ", e);
 			return false;
 		}
-		return true;
 	}
 
-	public static MessageConsumer getConsumer() {
+	public static QueueingConsumer generateConsumer() {
 		if(conn == null)
 			init();
-		return consumer;
+		try {
+			QueueingConsumer consumer = new QueueingConsumer(channel);
+			channel.basicConsume(conf.getMQQueueName(), true, consumer);
+			return consumer;
+		} catch (Exception e) {
+			logger.error("Error occurs when generate consumer, ", e);
+			return null;
+		}
 	}
 }

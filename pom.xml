@@ -96,10 +96,10 @@
 			<version>1.7.5</version>
 		</dependency>
 		<dependency>
-	<groupId>org.apache.activemq</groupId>
-	<artifactId>activemq-core</artifactId>
-	<version>5.7.0</version>
-    </dependency>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+			<version>3.3.5</version>
+		</dependency>
     <dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>

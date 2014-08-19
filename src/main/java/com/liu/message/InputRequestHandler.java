@@ -4,31 +4,28 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.TextMessage;
-
 import org.apache.log4j.Logger;
 
 import com.liu.dispatcher.RequestLogger;
 import com.liu.helper.BaiduPushHelper;
 import com.liu.helper.QueueHelper;
 import com.liu.helper.RedisHelper;
+import com.rabbitmq.client.QueueingConsumer;
 
 public class InputRequestHandler implements Runnable {
     private static final Logger logger = Logger.getLogger(InputRequestHandler.class);
 
     private final int id;
-    private static MessageConsumer consumer;
+    private QueueingConsumer consumer;
 
-    public InputRequestHandler(int id, MessageConsumer consumer) {
+    public InputRequestHandler(int id, QueueingConsumer consumer) {
         this.id = id;
-        InputRequestHandler.consumer = consumer;
+        this.consumer = consumer;
     }
 
     /* Used to coordinate multiple threads when queue connection went wrong,
     and needed to shutdown and recreate another queue producer */
-    private static FutureTask<MessageConsumer> createProducerTaskFuture = null;
+    private static FutureTask<QueueingConsumer> createProducerTaskFuture = null;
     @Override
     public void run() {
         if(consumer == null) {
@@ -39,27 +36,22 @@ public class InputRequestHandler implements Runnable {
 
         while (true) {
         	try {
-				TextMessage textMsg = (TextMessage) consumer.receive();
+        		QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        	    String textMsg = new String(delivery.getBody());
 				send(textMsg);
         	} catch (Throwable e) {
         		logger.error("msg sent exception, ", e);
-				if (consumer != null) {
-					try {
-						consumer.close();
-					} catch (Throwable e2) {
-						logger.error("Failed to shutdown InputRequestHandler: " + id, e2);
-					}
-				}
+				consumer = null;
 				try {
 	                if (createProducerTaskFuture == null) {
-	                    Callable<MessageConsumer> task = new Callable<MessageConsumer>() {
-	                        public MessageConsumer call() throws Exception {
+	                    Callable<QueueingConsumer> task = new Callable<QueueingConsumer>() {
+	                        public QueueingConsumer call() throws Exception {
 	                            logger.info("queue producer is about to recreate");
-	                            return QueueHelper.getConsumer();
+	                            return QueueHelper.generateConsumer();
 	                        }
 	                    };
-	                    FutureTask<MessageConsumer> futureTask =
-	                            new FutureTask<MessageConsumer>(task);
+	                    FutureTask<QueueingConsumer> futureTask =
+	                            new FutureTask<QueueingConsumer>(task);
 	                    if (createProducerTaskFuture == null) {
 	                        createProducerTaskFuture = futureTask;
 	                        futureTask.run();
@@ -78,12 +70,12 @@ public class InputRequestHandler implements Runnable {
         }
     }
     
-	private void send(TextMessage textMsg) {
+	private void send(String textMsg) {
 		try {
-			logger.info("$Msg from queue: " + textMsg.getText());
-			Message msg = Message.getFromInputJson(textMsg.getText());
+			logger.info("$Msg from queue: " + textMsg);
+			Message msg = Message.getFromInputJson(textMsg);
 			if (msg == null || !msg.isValidMessage()) {
-				logger.error("$error_input, dropped. " + textMsg.getText());
+				logger.error("$error_input, dropped. " + textMsg);
 				return;
 			}
 			msg.normalize();

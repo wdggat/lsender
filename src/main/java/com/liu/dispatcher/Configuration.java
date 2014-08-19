@@ -54,12 +54,24 @@ public class Configuration {
         loadConf(getDefaultConfInputStream());
     }
     
-    public String getMQBrokerUrl() {
-    	return properties.getProperty("mq_broker");
+    public String getMQHost() {
+    	return properties.getProperty("mq_host");
     }
     
     public String getMQQueueName() {
     	return properties.getProperty("mq_queuename");
+    }
+
+    public int getMQPort() {
+    	return Integer.parseInt(properties.getProperty("mq_port"));
+    }
+    
+    public String getMQUser(){
+    	return properties.getProperty("mq_user");
+    }
+    
+    public String getMQPassword() {
+    	return properties.getProperty("mq_password");
     }
     
     public String getMsgDoneLogf() {

@@ -2,23 +2,23 @@ package com.liu.message;
 
 import java.util.Date;
 
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.TextMessage;
-
 import com.liu.helper.QueueHelper;
+import com.rabbitmq.client.ConsumerCancelledException;
+import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.ShutdownSignalException;
 
 public class QueueFettler {
-	public static void main(String argv[]) throws JMSException {
+	public static void main(String argv[]) throws ShutdownSignalException, ConsumerCancelledException, InterruptedException{
 		QueueHelper.init();
 		System.out.println("QueueHelper inited.");
-		MessageConsumer consumer = QueueHelper.getConsumer();
+		QueueingConsumer consumer = QueueHelper.generateConsumer();
 		int i = 0;
 		while(i < 100) {
 			i += 1;
-			TextMessage textMsg = (TextMessage) consumer.receive();
-			Message msg = Message.getFromInputJson(textMsg.getText());
-			System.out.println("$msg_" + i + " : " + new Date(msg.getTime()).toString() + " - " + textMsg.getText());
+			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+			String textMsg = new String(delivery.getBody());
+			Message msg = Message.getFromInputJson(textMsg);
+			System.out.println("$msg_" + i + " : " + new Date(msg.getTime()).toString() + " - " + textMsg);
 		}
 	}
 }

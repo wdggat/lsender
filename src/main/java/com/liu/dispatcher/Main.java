@@ -3,8 +3,6 @@ package com.liu.dispatcher;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.jms.MessageConsumer;
-
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -12,6 +10,7 @@ import com.liu.helper.BaiduPushHelper;
 import com.liu.helper.QueueHelper;
 import com.liu.helper.RedisHelper;
 import com.liu.message.InputRequestHandler;
+import com.rabbitmq.client.QueueingConsumer;
 
 public class Main {
 	private static final Logger logger = Logger.getLogger(Main.class);
@@ -42,10 +41,10 @@ public class Main {
         HttpClientVM.init(200, 40);*/
 
         logger.info("Setup messages consumers ...");
-        MessageConsumer consumer = QueueHelper.getConsumer();
         int inputMsgQueuePoolSize = 5;
         ExecutorService msgPool = Executors.newFixedThreadPool(inputMsgQueuePoolSize);
         for (int i = 0; i < inputMsgQueuePoolSize; i++) {
+        	QueueingConsumer consumer = QueueHelper.generateConsumer();
             msgPool.submit(new InputRequestHandler(i, consumer));
         }
 
