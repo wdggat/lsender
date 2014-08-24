@@ -4,8 +4,6 @@ import org.apache.log4j.Logger;
 
 import com.baidu.yun.channel.auth.ChannelKeyPair;
 import com.baidu.yun.channel.client.BaiduChannelClient;
-import com.baidu.yun.channel.exception.ChannelClientException;
-import com.baidu.yun.channel.exception.ChannelServerException;
 import com.baidu.yun.channel.model.PushUnicastMessageRequest;
 import com.baidu.yun.channel.model.PushUnicastMessageResponse;
 import com.baidu.yun.core.log.YunLogEvent;

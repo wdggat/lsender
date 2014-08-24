@@ -3,6 +3,7 @@ package com.liu.message;
 import org.apache.commons.lang.StringUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.liu.helper.Utils;
 
 public class Message implements Comparable<Message> {
@@ -109,15 +110,21 @@ public class Message implements Comparable<Message> {
 	public String toJson() {
 		return JSON.toJSONString(this);
 	}
+	
+	@Override
+	public String toString() {
+		return JSONObject.toJSONString(this);
+	}
 
 	public String getFormatedTime() {
 		return Utils.showTime(time);
 	}
 
+	// For treeset, never return 0.
 	@Override
 	public int compareTo(Message another) {
 		long anotherTime = another.getLocalTime();
-		return localTime > anotherTime ? 1 : (localTime == anotherTime ? 0 : -1);
+		return localTime >= anotherTime ? 1 : -1;
 	}
 
 	public static Message quickMessage(String from, String fromUid, String to, String content) {

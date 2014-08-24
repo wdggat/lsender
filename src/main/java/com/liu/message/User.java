@@ -12,7 +12,7 @@ public class User {
 
 	private static final String SHOW_MALE = "汉子";
 	private static final String SHOW_FEMALE = "妹子";
-	private static final String SHOW_GENDER_UNSET = "路人而已";
+	private static final String SHOW_GENDER_UNSET = "路人甲";
 
 	private String email;
 	private int gender;
@@ -125,7 +125,7 @@ public class User {
 		}
 	}
 	
-	public String showBirthday() {
+/*	public String showBirthday() {
 		return Utils.showDate(birthday);
-	}
+	}*/
 }
