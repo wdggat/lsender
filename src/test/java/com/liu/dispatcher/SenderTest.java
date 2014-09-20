@@ -29,8 +29,8 @@ public class SenderTest {
 		msg.setFromUid("95270");
 		msg.setContent("内容test");
 		msg.setSubject("主题test");
-//		msg.setTo("hzliuxiaolong@163.com");
-		msg.setTo("597442779@qq.com");
+		msg.setTo("hzliuxiaolong@163.com");
+//		msg.setTo("597442779@qq.com");
 //		Sender.sendSimpleMail(msg);
 		return Sender.sendMail(msg);
 	}

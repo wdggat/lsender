@@ -43,9 +43,10 @@ public class Sender {
 	}
 	
 	private static final String appendixWhoami = "我只是信息的转发工,注册匿名社交工具whoami,贴上uid,可与发信人进行半匿名对话哦.";
+	private static final String appendixHtmlWhoami = "我只是信息的转发工,注册匿名社交工具<a href=\"" + conf.getDownloadLink() + "\" target=\"_blank\">whoami</a>,贴上uid,可与发信人进行半匿名对话哦.";
 	private static final String appendixUid = "消息主人uid: ";
 	private static String appendReadmeToHtmlMailContent(String content, String fromUid) {
-		return content + "<br><br><br><br><br><font color=\"red\">" + appendixWhoami + "<br>" + appendixUid + fromUid + "<br></font>";
+		return content + "<br><br><br><br><br><font color=\"red\">" + appendixHtmlWhoami + "<br>" + appendixUid + fromUid + "<br></font>";
 	}
 	
 	private static String appendReadmeToTextMailContent(String content, String fromUid) {

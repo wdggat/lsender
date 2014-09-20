@@ -117,4 +117,8 @@ public class Configuration {
     public String getBaiduPushSecretKey() {
     	return properties.getProperty("baidu_secret_key");
     }
+    
+    public String getDownloadLink() {
+    	return properties.getProperty("download_link");
+    }
 }
